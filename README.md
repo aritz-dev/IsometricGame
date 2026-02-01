@@ -7,19 +7,15 @@ El objetivo es mostrar por qué un código que parece correcto puede producir ve
 
 ## 1. EL CÓDIGO INICIAL
 
-En este apartado se presenta la solución más habitual cuando se intenta mover algo por primera vez. Es el código más directo, el que se suele escribir de manera intuitiva, y sirve para ver por qué, aunque parezca funcionar, en realidad es incorrecto.
-
 El planteamiento inicial suele ser: "cada vez que se actualice el juego, el objeto se mueve un poco". El código podría tener esta forma:
 
 
 ```cpp
 float speed = 0.1f;
 int directionX = 0;  // -1 izquierda, 0 quieto, 1 derecha
-int directionY = 0;  // -1 arriba, 0 quieto, 1 abajo
 
 // Dentro del game loop
-rect.x += speed * directionX;
-rect.y += speed * directionY;
+rectangle.x += speed * directionX;
 ```
 
 La lógica es sencilla: en cada iteración del bucle principal, el rectángulo avanza 0.1 píxeles en la dirección indicada. 
@@ -39,23 +35,21 @@ En este apartado se analiza qué pasa realmente cuando el juego corre. Entender 
 
 ### 3.1 Estructura básica del ciclo principal
 
-Un videojuego es básicamente un bucle infinito que se repite todo el rato:
+Un videojuego es básicamente un bucle infinito que se repite todo el rato. Cada vuelta completa de este bucle equivale a un frame (un fotograma) del juego.
 
 ```cpp
 while (running) {
-    HandleEvents();  // 1. Leer teclado, mouse, etc.
-    Update();        // 2. Actualizar posiciones, lógica (AQUÍ está nuestro código)
-    Render();        // 3. Dibujar todo en pantalla
+    HandleEvents(); 
+    Update();        
+    Render();       
 }
 ```
-
-Cada vuelta completa de este bucle equivale a un frame (un fotograma) del juego. Es como una película: cada frame es una imagen. Cuantos más frames por segundo, más fluido se ve.
 
 ### 3.2 Velocidad de iteración del loop
 
 ¿A qué velocidad da vueltas este bucle? La velocidad depende de qué tan rápido es el procesador (GHz, núcleos). Cada vuelta del game loop necesita que el procesador ejecute millones de instrucciones (todas las líneas de código de HandleEvents, Update, y Render).
 
-Los procesadores tienen un reloj interno, como un metrónomo. La velocidad de ese reloj se mide en GHz (Gigahercios): 1 GHz = 1,000,000,000 tics por segundo.
+Los procesadores tienen un reloj interno, como un metrónomo. La velocidad de ese reloj se mide en GHz: 1 GHz = 1,000,000,000 tics por segundo.
 
 Si el procesador hace más tics por segundo: completa cada vuelta más rápido, hay más vueltas por segundo, se ejecuta más veces la línea de actualización de posición, y el objeto se mueve más rápido.
 
@@ -71,9 +65,9 @@ Indica cuántas vueltas del loop hace el juego en 1 segundo. Es lo mismo que "fr
 
 60 FPS: el loop se ejecuta 60 veces por segundo
 
-### 4.2 Frame Time (Teórico)
+### 4.2 Frame Time
 
-Duración ideal que debería tardar 1 vuelta completa del loop (sin variaciones reales).
+Duración ideal que debería tardar 1 vuelta completa del loop.
 
 ```math
 \text{Frame Time} = \frac{1}{\text{FPS}}
@@ -81,7 +75,6 @@ Duración ideal que debería tardar 1 vuelta completa del loop (sin variaciones 
 
 | FPS | Cálculo | Frame Time |
 |-----|---------|------------|
-| 30 | 1 ÷ 30 | 0.0333 seg = 33.3 ms |
 | 60 | 1 ÷ 60 | 0.0166 seg = 16.6 ms |
 | 144 | 1 ÷ 144 | 0.0069 seg = 6.9 ms |
 
@@ -89,7 +82,7 @@ Duración ideal que debería tardar 1 vuelta completa del loop (sin variaciones 
 
 Delta Time captura el intervalo de tiempo entre dos puntos específicos del código: el momento en que medimos el tiempo en el frame anterior y el momento en que lo medimos en el frame actual.
 
-Imagina que el reloj del sistema está marcando estos valores (en milisegundos arbitrarios):
+Imagina que en cada frame tomamos captura de la cantidad de ticks que ha dado el procesador:
 
 ```cpp
 // ========== FRAME 1 ==========
@@ -112,7 +105,7 @@ lastTime = 1033;            // Guardamos para el siguiente frame
 // ... el juego hace cosas ...
 ```
 
-**Observación importante:** Nota que cada frame puede tomar un tiempo diferente (16ms, 17ms). Delta Time captura estas variaciones reales del hardware.
+Nota que cada frame puede tomar un tiempo diferente (16ms, 17ms).
 
 ## 5. ANÁLISIS Y DIAGNOSTICO DEL PROBLEMA
 
@@ -133,13 +126,13 @@ La solución es plasmar la física del mundo real en el código. Usamos el Movim
 En física real:
 
 ```math
-x_{\text{nueva}}(m) = x_0(m) + v\left(\frac{m}{s}\right) \cdot \Delta t(s)
+x_{\text{nueva}}(t) = x_0 + v\left(\frac{m}{s}\right) \cdot \Delta t(s)
 ```
 
 En videojuegos (mismos conceptos, unidades en píxeles):
 
 ```math
-x_{\text{nueva}}(pixel) = x_0(pixel) + v\left(\frac{pixel}{seg}\right) \cdot \Delta t(s)
+x_{\text{nueva}}(t) = x_0 + v\left(\frac{pixel}{seg}\right) \cdot \Delta t(s)
 ```
 
 **Delta Time** multiplica la velocidad por el **tiempo real transcurrido**, no por "vueltas del loop".
@@ -149,7 +142,7 @@ float velocity = 100.0f;  // 100 píxeles/segundo
 x = x + velocity * deltaTime;
 ```
 
-### 6.2 Demostración: Delta Time compensa FPS
+### 6.2 Demostración: Delta Time compensa el desplazamiento en diferentes FPS
 
 **PC rápido (240 FPS, dt = 4.2 ms = 0.0042s):**
 ```
@@ -168,8 +161,7 @@ Frame 2: x += 100 × 0.0167 = 1.67 píxeles
 Frame 60: x += 100 × 0.0167 = 1.67 píxeles
 TOTAL: 1.67 × 60 = 100.2 píxeles ≈ 100 píxeles/segundo
 ```
-### 6.3 Verificación
-**Ambos PCs avanzan 100 píxeles en 1 segundo exacto.** Delta Time hace que menos frames (PC lento) compensen con saltos más grandes, y más frames (PC rápido) con saltos más pequeños. Velocidad **idéntica** en cualquier hardware.
+**Ambos PCs avanzan 100 píxeles en 1 segundo.** Delta Time hace que menos frames (PC lento) compensen con saltos más grandes, y más frames (PC rápido) con saltos más pequeños. Velocidad **idéntica** en cualquier hardware.
 
 ## 7. IMPLEMENTACIÓN PRÁCTICA
 
