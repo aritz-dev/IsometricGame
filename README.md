@@ -114,34 +114,6 @@ lastTime = 1033;            // Guardamos para el siguiente frame
 
 **Observación importante:** Nota que cada frame puede tomar un tiempo diferente (16ms, 17ms). Delta Time captura estas variaciones reales del hardware.
 
-#### ¿Por qué se mide al principio del loop?
-
-Se podría pensar: "¿Por qué no medimos al final del frame para saber exactamente cuánto tardó TODO el procesamiento?"
-
-La respuesta es: **lo que importa para el movimiento es el tiempo entre actualizaciones de posición, no la duración interna de cada frame.**
-
-```cpp
-while (running) {
-    // PUNTO DE MEDICIÓN ← Aquí medimos siempre
-    Uint64 now = SDL_GetPerformanceCounter();
-    float deltaTime = CalcularDiferencia(now, lastTime);
-    lastTime = now;
-    
-    // Eventos
-    HandleEvents();
-    
-    // Update: aquí usamos deltaTime
-    player.x += velocity * deltaTime;  // ← Lo que importa es cuánto tiempo
-                                       //   pasó desde la ÚLTIMA vez que
-                                       //   actualizamos la posición
-    
-    // Render
-    Render();
-}
-```
-
-Si el frame anterior terminó hace 16ms, nuestro objeto debe moverse "16ms de distancia". Si terminó hace 20ms, debe moverse "20ms de distancia". Delta Time nos da exactamente esa información.
-
 ## 5. ANÁLISIS Y DIAGNOSTICO DEL PROBLEMA
 
 Regresando al código problemático:
@@ -170,7 +142,7 @@ En videojuegos (mismos conceptos, unidades en píxeles):
 x_{\text{nueva}}(pixel) = x_0(pixel) + v\left(\frac{pixel}{seg}\right) \cdot \Delta t(s)
 ```
 
-**Delta Time (\(\Delta t\))** multiplica la velocidad por el **tiempo real transcurrido**, no por "vueltas del loop".
+**Delta Time** multiplica la velocidad por el **tiempo real transcurrido**, no por "vueltas del loop".
 
 ```cpp
 float velocity = 100.0f;  // 100 píxeles/segundo
