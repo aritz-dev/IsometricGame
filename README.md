@@ -1,15 +1,3 @@
-PUNTOS A CORREGIR:
-
-- esta en segunda persona, incorrecto, que sea impersonal.
-- sigue habiendo emoticonos
-- las formulas fisicas de la vida real no estan bien representadas, deben ser asi asi:
-$$
-x_{\text{new}} = x_{\text{old}} + d_x \cdot v \cdot \Delta t
-$$ 
-- conceptos de la fisica deben ir junto a la solucion algo como "nosotros lo que realmente queremos hacer es esta formula para que se lo mas parecido a fisicas reales... bueno pues esto plasmado en los codigos seria asi.."
-- apartados como 10. RESUMEN Y BUENAS PRÁCTICAS y conclusiones y resumenes sobran...
-- se mencionan cosas como grvedad... no hace falta, ya que no aporta anda nuevo a lo fundamental...
-- no uses palabras complejas o refinadas, y tampoco frases cortas... osea las explicaciones deben ser claros y faciles de leer y entender.
 # FUNDAMENTOS DE CONTROL DE TIEMPO EN VIDEOJUEGOS
 Al desarrollar un videojuego, uno de los primeros problemas que aparecen es el movimiento de objetos en pantalla. Este documento explica cómo hacer que el juego funcione a la misma velocidad en cualquier equipo, independientemente de que sea un PC muy potente o un portátil modesto.
 ​
