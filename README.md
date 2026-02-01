@@ -74,9 +74,8 @@ Indica cuántas vueltas del loop hace el juego en 1 segundo. Es lo mismo que "fr
 ### 4.2 Frame Time (Teórico)
 
 Duración ideal que debería tardar 1 vuelta completa del loop (sin variaciones reales).
-$$
-\text{Frame Time} = \frac{1}{\text{FPS}}
-$$
+
+![formula](https://render.githubusercontent.com/render/math?math=\text{Frame Time} = \frac{1}{\text{FPS}})
 
 | FPS | Cálculo | Frame Time |
 |-----|---------|------------|
