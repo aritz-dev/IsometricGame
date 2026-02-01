@@ -23,8 +23,10 @@ int main()
 	//3. Create Window and Renderer
 	SDL_Window* window = SDL_CreateWindow("My game", windowWidth, windowHeight,  SDL_WINDOW_RESIZABLE);
 	SDL_Renderer* renderer= SDL_CreateRenderer(window, NULL);
+	
 	//4. Load Assets (Textures, Fonts, etc.)
 	
+
 	
 
 	//====================================

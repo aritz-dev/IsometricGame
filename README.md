@@ -229,15 +229,28 @@ Hay un problema sutil en el código. Cuando se presionan dos teclas a la vez (po
 El vector diagonal es aproximadamente 41% más largo, entonces el objeto va 41% más rápido en diagonal. Eso no tiene sentido.
 
 Solución: normalizar el vector (hacerlo de longitud 1):
+la longitud del vertor se calcula con el teorema de Pitágoras:
+
+```math 
+L = \sqrt{1^2 + 1^2} 
+```
+La pregunta que hay que hacer es: por que valor vamos a multiplicar, para que L=1:
+```math
+K*L=1
+```
+```math
+K=\frac{1}{L}
+```
+El valor por el que tenemos que multiplicar es K, que es 1/L
 ```cpp
 float length = sqrt(dx*dx + dy*dy);
-if (length > 0) {
-    dx = dx / length;
-    dy = dy / length;
+if (length > 0) { // Evitar división por cero cuando no se mueve
+    dx_normalized = dx / length; // es igual a dx * (1/L) 
+    dy_normalized = dy / length;
 }
 
-x += velocity * dx * deltaTime;
-y += velocity * dy * deltaTime;
+x += velocity * dx_normalized * deltaTime;
+y += velocity * dy_normalized * deltaTime;
 ```
 Ahora el movimiento diagonal va a la misma velocidad que el recto.      
 
