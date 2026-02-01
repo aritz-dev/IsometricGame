@@ -119,14 +119,16 @@ La solución es plasmar la física del mundo real en el código. Usamos el Movim
 ### 6.1 Fórmula del MRU
 
 En física real:
-$$
+
+```math
 x_{\text{nueva}}(m) = x_0(m) + v\left(\frac{m}{s}\right) \cdot \Delta t(s)
-$$
+```
 
 En videojuegos (mismos conceptos, unidades en píxeles):
-$$
+
+```math
 x_{\text{nueva}}(pixel) = x_0(pixel) + v\left(\frac{pixel}{seg}\right) \cdot \Delta t(s)
-$$
+```
 
 **Delta Time (\(\Delta t\))** multiplica la velocidad por el **tiempo real transcurrido**, no por "vueltas del loop".
 
@@ -214,7 +216,11 @@ Hay un problema sutil en el código. Cuando se presionan dos teclas a la vez (po
 
 
 - Una dirección: (1, 0) longitud = 1
-- Diagonal: (1, 1) longitud = $\sqrt{1^2 + 1^2}$ = $\sqrt{2}$ ≈ 1.41
+- Diagonal: (1, 1):
+    
+    ```math 
+    longitud = \sqrt{1^2 + 1^2} = \sqrt{2} = 1.41 
+    ```
 
 El vector diagonal es aproximadamente 41% más largo, entonces el objeto va 41% más rápido en diagonal. Eso no tiene sentido.
 
