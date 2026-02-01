@@ -87,20 +87,60 @@ Duración ideal que debería tardar 1 vuelta completa del loop (sin variaciones 
 
 ### 4.3 Delta Time (Real - Medido)
 
-Mide el tiempo real transcurrido entre inicio del frame actual e inicio del frame anterior. No mide duración interna de este loop (principio-fin del mismo frame).
+Delta Time captura el intervalo de tiempo entre dos puntos específicos del código: el momento en que medimos el tiempo en el frame anterior y el momento en que lo medimos en el frame actual.
 
-De esta manera captura todo el intervalo entre iteraciones, tomando en cuenta llamada al prinpicio del bucle y otros procesos que se ejecutan entre loops.
+Imagina que el reloj del sistema está marcando estos valores (en milisegundos arbitrarios):
+
 ```cpp
-double lastTime = 1.000;  // ← INICIO frame ANTERIOR
+// ========== FRAME 1 ==========
+Uint64 lastTime = 1000;     // Primera medición: el reloj marca 1000
+// ... el juego hace cosas (eventos, update, render) ...
 
-// ============= INICIO frame ACTUAL =============
-double currentTime = 1.016;  // ← Momento real ahora
-double dt = currentTime - lastTime;  // dt = 16 ms TOTAL
-lastTime = currentTime;              // Guardar para siguiente
+// ========== FRAME 2 ==========
+Uint64 now = 1016;          // Segunda medición: el reloj marca 1016
+// ¿Cuánto tiempo pasó entre las dos mediciones?
+float deltaTime = 1016 - 1000 = 16 ms = 0.016 segundos
 
-// Procesamiento (~10 ms) + espera externa (~6 ms)
-// ============= FIN frame ACTUAL =============
+lastTime = 1016;            // Guardamos para el siguiente frame
+// ... el juego hace cosas ...
+
+// ========== FRAME 3 ==========
+Uint64 now = 1033;          // Tercera medición: el reloj marca 1033
+float deltaTime = 1033 - 1016 = 17 ms = 0.017 segundos
+
+lastTime = 1033;            // Guardamos para el siguiente frame
+// ... el juego hace cosas ...
 ```
+
+**Observación importante:** Nota que cada frame puede tomar un tiempo diferente (16ms, 17ms). Delta Time captura estas variaciones reales del hardware.
+
+#### ¿Por qué se mide al principio del loop?
+
+Se podría pensar: "¿Por qué no medimos al final del frame para saber exactamente cuánto tardó TODO el procesamiento?"
+
+La respuesta es: **lo que importa para el movimiento es el tiempo entre actualizaciones de posición, no la duración interna de cada frame.**
+
+```cpp
+while (running) {
+    // PUNTO DE MEDICIÓN ← Aquí medimos siempre
+    Uint64 now = SDL_GetPerformanceCounter();
+    float deltaTime = CalcularDiferencia(now, lastTime);
+    lastTime = now;
+    
+    // Eventos
+    HandleEvents();
+    
+    // Update: aquí usamos deltaTime
+    player.x += velocity * deltaTime;  // ← Lo que importa es cuánto tiempo
+                                       //   pasó desde la ÚLTIMA vez que
+                                       //   actualizamos la posición
+    
+    // Render
+    Render();
+}
+```
+
+Si el frame anterior terminó hace 16ms, nuestro objeto debe moverse "16ms de distancia". Si terminó hace 20ms, debe moverse "20ms de distancia". Delta Time nos da exactamente esa información.
 
 ## 5. ANÁLISIS Y DIAGNOSTICO DEL PROBLEMA
 
